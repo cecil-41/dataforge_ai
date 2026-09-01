@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dataforge-ai"
+version = "0.1.0"
+description = "DataForge AI -- PySpark to Databricks/Azure/AI data platform"
+requires-python = ">=3.11"
+# pyspark is intentionally NOT listed here: the base Docker image already
+# provides it via conda, and pip-installing a second copy would risk a
+# version mismatch (same reason requirements-extra.txt installs delta-spark
+# with --no-deps).
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dataforge_ai"]

@@ -10,7 +10,11 @@ services:
       - ./notebooks:/home/jovyan/work/notebooks
       - ./scripts:/home/jovyan/work/scripts
       - ./data:/home/jovyan/work/data
+      - ./src:/home/jovyan/work/src
+      - ./tests:/home/jovyan/work/tests
+      - ./pyproject.toml:/home/jovyan/work/pyproject.toml
     environment:
       - JUPYTER_ENABLE_LAB=yes
       - JUPYTER_TOKEN=pyspark
+      - SPARK_DRIVER_MEMORY=4g
     command: start-notebook.sh --NotebookApp.token='pyspark'
