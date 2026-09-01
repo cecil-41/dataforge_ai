@@ -1,0 +1,16 @@
+services:
+  pyspark:
+    build: .
+    image: pyspark-course:latest
+    container_name: pyspark-course
+    ports:
+      - "8888:8888"   # JupyterLab
+      - "4040:4040"   # Spark UI (first active SparkContext)
+    volumes:
+      - ./notebooks:/home/jovyan/work/notebooks
+      - ./scripts:/home/jovyan/work/scripts
+      - ./data:/home/jovyan/work/data
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=pyspark
+    command: start-notebook.sh --NotebookApp.token='pyspark'

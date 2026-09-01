@@ -1,0 +1,8 @@
+.venv/
+data/raw/*
+data/checkpoints/
+data/delta/
+spark-warehouse/
+metastore_db/
+__pycache__/
+.ipynb_checkpoints/
