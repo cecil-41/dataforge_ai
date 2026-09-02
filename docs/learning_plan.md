@@ -59,7 +59,7 @@
 - dbt for transformation and testing
 - Terraform for infrastructure-as-code
 - CI/CD for data pipelines (Azure DevOps or GitHub Actions)
-- **Certification:** Azure Data Engineer Associate (DP-700 / current equivalent)
+- **Certification:** Azure Databricks Data Engineer Associate (DP-750)
 - **Project:** A fully cloud-deployed, IaC-provisioned, CI/CD pipeline pulling from a real API into a lakehouse
 - **Earning impact:** Senior data engineer band (R700k–R900k); makes you remote-for-overseas viable
 
@@ -85,9 +85,11 @@
 
 ## Certifications worth the time (in order)
 
-1. **Databricks Certified Data Engineer Associate** — directly relevant, SA enterprises value it. https://www.databricks.com/learn/certification/data-engineer-associate $200
-2. **Azure Data Engineer Associate** — the local cloud sweet spot https://learn.microsoft.com/en-us/credentials/certifications/fabric-data-engineer-associate/?practice-assessment-type=certification $165
+1. **Databricks Certified Data Engineer Associate** — foundational, platform-agnostic Spark/Delta Lake credential. Do this once Phase 1's medallion architecture work is solid. https://www.databricks.com/learn/certification/data-engineer-associate $200
+2. **Databricks Certified Data Engineer Professional** — advanced tier on the same platform: streaming, CI/CD, Lakeflow Jobs, cost/performance optimisation, Unity Catalog, Asset Bundles. Do after Phase 1 wraps (Structured Streaming + Jobs/Workflows). https://www.databricks.com/learn/certification/data-engineer-professional $200
 3. *(Optional later)* **AWS Certified Data Engineer** — broadens your remote-for-overseas reach. https://aws.amazon.com/certification/certified-data-engineer-associate $150
+
+Note: the old "Azure Data Engineer Associate" (DP-203) was retired 03/31/2025 and is no longer bookable — Microsoft's Azure-side data engineering cert is now the Databricks-specific DP-750 above.
 
 Certifications are a *credible signal*, not the goal. Employers hire on proof-of-work; certs get you past the first filter.
 

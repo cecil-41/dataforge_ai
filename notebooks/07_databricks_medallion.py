@@ -27,10 +27,25 @@
 # MAGIC install does -- points at the package's `pyproject.toml` in this cloned
 # MAGIC repo. `%pip` restarts the Python process on this cluster when it
 # MAGIC finishes, so it must run before any other imports.
+# MAGIC
+# MAGIC Note: a notebook's working directory in a Databricks Git folder is the
+# MAGIC notebook's *own* folder (`notebooks/`), not the repo root -- so a plain
+# MAGIC `%pip install -e .` fails to find `pyproject.toml`. We resolve the repo
+# MAGIC root explicitly first instead of relying on a relative `.`.
 
 # COMMAND ----------
 
-# MAGIC %pip install -e .
+import os
+
+notebook_dir = os.path.dirname(
+    dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+)
+repo_root = "/Workspace" + os.path.dirname(notebook_dir)
+print("Repo root:", repo_root)
+
+# COMMAND ----------
+
+# MAGIC %pip install -e {repo_root}
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
