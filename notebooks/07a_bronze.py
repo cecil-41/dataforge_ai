@@ -17,16 +17,19 @@
 # MAGIC %md
 # MAGIC ## Install the `dataforge_ai` package from this Git folder
 # MAGIC
-# MAGIC `%pip` restarts the Python process on this cluster when it finishes,
-# MAGIC so it must run before any other imports. Resolving the repo root as an
-# MAGIC absolute path (rather than a relative `..`) makes this reliable both
-# MAGIC when run interactively and as a Databricks Job task -- the working
-# MAGIC directory Job tasks execute in doesn't always match the notebook's own
-# MAGIC folder the way an attached interactive session does.
+# MAGIC This must run before any other imports, since `dbutils.library.
+# MAGIC restartPython()` restarts the Python process afterwards. Resolving the
+# MAGIC repo root as an absolute path (rather than a relative `..`) and
+# MAGIC installing via `subprocess` -- instead of the `%pip install -e {var}`
+# MAGIC magic-command variable interpolation -- makes this reliable both when
+# MAGIC run interactively and as a Databricks Job task, where the working
+# MAGIC directory and magic-command variable substitution behave differently.
 
 # COMMAND ----------
 
 import os
+import subprocess
+import sys
 
 notebook_dir = os.path.dirname(
     dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
@@ -34,10 +37,8 @@ notebook_dir = os.path.dirname(
 repo_root = "/Workspace" + os.path.dirname(notebook_dir)
 print("Repo root:", repo_root)
 
-# COMMAND ----------
-
-# MAGIC %pip install -e {repo_root}
-# MAGIC dbutils.library.restartPython()
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", repo_root])
+dbutils.library.restartPython()
 
 # COMMAND ----------
 

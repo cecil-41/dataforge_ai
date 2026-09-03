@@ -15,13 +15,16 @@
 # MAGIC %md
 # MAGIC ## Install the `dataforge_ai` package from this Git folder
 # MAGIC
-# MAGIC Resolving the repo root as an absolute path (rather than a relative
-# MAGIC `..`) makes this reliable both when run interactively and as a
-# MAGIC Databricks Job task.
+# MAGIC Resolving the repo root as an absolute path and installing via
+# MAGIC `subprocess` -- instead of `%pip install -e {var}` magic-command
+# MAGIC variable interpolation -- makes this reliable both when run
+# MAGIC interactively and as a Databricks Job task.
 
 # COMMAND ----------
 
 import os
+import subprocess
+import sys
 
 notebook_dir = os.path.dirname(
     dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
@@ -29,10 +32,8 @@ notebook_dir = os.path.dirname(
 repo_root = "/Workspace" + os.path.dirname(notebook_dir)
 print("Repo root:", repo_root)
 
-# COMMAND ----------
-
-# MAGIC %pip install -e {repo_root}
-# MAGIC dbutils.library.restartPython()
+subprocess.check_call([sys.executable, "-m", "pip", "install", "-e", repo_root])
+dbutils.library.restartPython()
 
 # COMMAND ----------
 
