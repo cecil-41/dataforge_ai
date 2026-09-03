@@ -18,11 +18,25 @@
 # MAGIC ## Install the `dataforge_ai` package from this Git folder
 # MAGIC
 # MAGIC `%pip` restarts the Python process on this cluster when it finishes,
-# MAGIC so it must run before any other imports.
+# MAGIC so it must run before any other imports. Resolving the repo root as an
+# MAGIC absolute path (rather than a relative `..`) makes this reliable both
+# MAGIC when run interactively and as a Databricks Job task -- the working
+# MAGIC directory Job tasks execute in doesn't always match the notebook's own
+# MAGIC folder the way an attached interactive session does.
 
 # COMMAND ----------
 
-# MAGIC %pip install -e ..
+import os
+
+notebook_dir = os.path.dirname(
+    dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+)
+repo_root = "/Workspace" + os.path.dirname(notebook_dir)
+print("Repo root:", repo_root)
+
+# COMMAND ----------
+
+# MAGIC %pip install -e {repo_root}
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
