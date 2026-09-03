@@ -35,7 +35,7 @@
 # COMMAND ----------
 
 # DBTITLE 1,Cell 3
-# MAGIC %pip install -e .
+# MAGIC %pip install -e ..
 # MAGIC dbutils.library.restartPython()
 
 # COMMAND ----------
@@ -49,14 +49,20 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Cell 5
 import os
 import requests
+
+# DBFS is disabled on this workspace — download directly to a UC Volume
+# so Spark can read the files without a local-to-volume copy step.
+VOL = "/Volumes/workspace/default/dataforge_storage"
+spark.sql("CREATE VOLUME IF NOT EXISTS workspace.default.dataforge_storage")
 
 BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
 LOOKUP_URL = "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv"
 MONTHS = ["2023-01", "2023-02", "2023-03"]
 
-RAW_DIR = "/dbfs/tmp/dataforge_raw"
+RAW_DIR = f"{VOL}/raw"
 os.makedirs(RAW_DIR, exist_ok=True)
 
 
@@ -90,11 +96,16 @@ print("\nFiles:", os.listdir(RAW_DIR))
 
 # COMMAND ----------
 
+# DBTITLE 1,Cell 7
+import sys
+sys.path.insert(0, "/Workspace/Users/cecilbennett41@gmail.com/dataforge_ai/src")
+
 from pyspark.sql import functions as F
 from dataforge_ai import read_trips, clean_trips, join_zones, hourly_demand
 
-RAW = "dbfs:/tmp/dataforge_raw"
-DELTA_ROOT = "dbfs:/tmp/dataforge_delta"
+VOL = "/Volumes/workspace/default/dataforge_storage"
+RAW = f"{VOL}/raw"
+DELTA_ROOT = f"{VOL}/delta"
 BRONZE_PATH = f"{DELTA_ROOT}/bronze/trips"
 SILVER_PATH = f"{DELTA_ROOT}/silver/trips_enriched"
 GOLD_PATH = f"{DELTA_ROOT}/gold/hourly_demand"
@@ -112,6 +123,7 @@ paths = [
 
 # COMMAND ----------
 
+# DBTITLE 1,Cell 9
 trips_raw = read_trips(spark, paths).withColumn(
     "pickup_month", F.date_format("tpep_pickup_datetime", "yyyy-MM")
 )
