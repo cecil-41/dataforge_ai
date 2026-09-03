@@ -35,8 +35,21 @@ for the full phase descriptions.
       [src/dataforge_ai](../src/dataforge_ai), [tests](../tests)
 
 ## Phase 1 — Databricks + Delta Lake
-- [ ] Databricks workspace: Community Edition (free, no expiry; sufficient for
-      everything except Unity Catalog — see note below)
+- [x] Databricks workspace: Free Edition (serverless compute, no classic
+      manually-configured clusters). Two gotchas discovered porting
+      [notebooks/07a_bronze.py](../notebooks/07a_bronze.py) /
+      [07b_silver.py](../notebooks/07b_silver.py) /
+      [07c_gold.py](../notebooks/07c_gold.py) from the local pipeline:
+      (1) `%pip install -e .` resolves relative to the notebook's own
+      folder in a Git folder, not the repo root — fixed by installing from
+      the repo root path explicitly; (2) **DBFS is disabled** on this
+      workspace and serverless compute cannot read local `file:///tmp/...`
+      paths either — Spark on serverless only sees `/Workspace/` and
+      **Unity Catalog Volumes**, so raw data + Delta tables now live under
+      a UC Volume (`/Volumes/workspace/default/dataforge_storage`) instead
+      of `dbfs:/` paths. Pipeline run validated end-to-end on Databricks:
+      Silver = 9,301,798 rows, Gold = 192 rows -- both match the local
+      Docker pipeline (notebook 06) exactly
 - [x] Delta Lake (ACID transaction log verified via commit JSON inspection +
       `DeltaTable.history()`; schema evolution via `mergeSchema`; time travel
       via `versionAsOf`; `MERGE` upserts via `whenMatchedUpdate` +
@@ -54,8 +67,11 @@ for the full phase descriptions.
       [notebooks/06_delta_lake_fundamentals.ipynb](../notebooks/06_delta_lake_fundamentals.ipynb)
 - [ ] Databricks jobs, workflows, cluster config
 - [ ] Structured Streaming fundamentals
-- [ ] Unity Catalog — concept only in Phase 1 (not supported on Community
-      Edition); hands-on deferred to Phase 2 Azure Databricks workspace
+- [x] Unity Catalog — the Free Edition workspace already provisions a
+      default `workspace` catalog with UC Volumes enabled; used directly
+      above for raw data + Delta table storage in place of DBFS. Deeper
+      governance features (external locations, fine-grained access control)
+      still deferred to Phase 2's full Azure Databricks workspace
 
 ## Phase 2 — Azure + modern data stack
 - [ ] Azure Data Factory
