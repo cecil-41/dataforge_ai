@@ -44,10 +44,25 @@ dbutils.library.restartPython()
 
 # MAGIC %md
 # MAGIC ## Fetch the dataset into a Unity Catalog Volume
+# MAGIC
+# MAGIC `dbutils.library.restartPython()` above wipes all Python state,
+# MAGIC including the `sys.path` entry the editable install added -- a known
+# MAGIC Databricks serverless-compute behavior (the install's `.pth` file
+# MAGIC isn't re-read after the restart). Re-adding `src/` to `sys.path` here,
+# MAGIC recomputed the same way as before the restart, fixes it without
+# MAGIC hardcoding a path.
 
 # COMMAND ----------
 
 import os
+import sys
+
+notebook_dir = os.path.dirname(
+    dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+)
+repo_root = "/Workspace" + os.path.dirname(notebook_dir)
+sys.path.append(f"{repo_root}/src")
+
 import requests
 
 VOL = "/Volumes/workspace/default/dataforge_storage"
