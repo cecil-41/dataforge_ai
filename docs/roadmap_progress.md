@@ -65,13 +65,58 @@ for the full phase descriptions.
       — all three reuse `dataforge_ai` package functions unchanged, only the
       storage layer is new:
       [notebooks/06_delta_lake_fundamentals.ipynb](../notebooks/06_delta_lake_fundamentals.ipynb)
-- [ ] Databricks jobs, workflows, cluster config
-- [ ] Structured Streaming fundamentals
+- [x] Databricks jobs, workflows, cluster config: `dataforge_medallion` Job
+      with three dependent Notebook tasks (`bronze` -> `silver` -> `gold`,
+      each `Depends on` the previous, `Run if: All succeeded`, serverless
+      compute per task) — mirrors real medallion pipelines where each layer
+      is independently retryable/observable/schedulable instead of one
+      monolithic run. Two serverless-specific gotchas hit and fixed along
+      the way: (1) `%pip install -e` magic-command variable interpolation
+      is unreliable across interactive vs. Job-task execution — fixed by
+      installing via `subprocess.check_call` on a dynamically-resolved
+      absolute repo-root path instead; (2) `dbutils.library.restartPython()`
+      wipes the `sys.path` entry the editable install added on serverless
+      compute (documented Databricks issue) — fixed by re-appending
+      `{repo_root}/src` to `sys.path` after the restart, recomputed fresh
+      each time rather than hardcoded. Full Job run succeeded end-to-end in
+      1m 48s, all three tasks green
+- [x] Structured Streaming fundamentals (core mechanics validated locally in
+      [notebooks/08_structured_streaming.ipynb](../notebooks/08_structured_streaming.ipynb)):
+      `rate` source micro-batch model, output modes, triggers
+      (`processingTime`, `availableNow`), checkpoint-based incremental
+      ingestion (proven on the first file arrival), windowed aggregation +
+      watermarking for Gold. **Known limitation discovered, not resolved
+      locally:** plain Spark's file streaming source forces one fixed
+      schema across every file in a directory — it can't handle the NYC
+      TLC dataset's genuine per-month physical-type drift on `VendorID`
+      (already documented in notebook 01) the way batch's `read_and_cast`
+      does (reads each file with its own native schema, casts after).
+      Disabling the vectorized Parquet reader did not fix it. This is
+      exactly the gap Databricks Auto Loader's schema evolution + rescued
+      data column exist to solve — deferred to the Databricks Auto Loader
+      port rather than solved with plain OSS Structured Streaming
 - [x] Unity Catalog — the Free Edition workspace already provisions a
       default `workspace` catalog with UC Volumes enabled; used directly
       above for raw data + Delta table storage in place of DBFS. Deeper
       governance features (external locations, fine-grained access control)
       still deferred to Phase 2's full Azure Databricks workspace
+
+### Databricks Certified Data Engineer Associate — exam-prep gap round
+Closing gaps identified against the official exam guide's weighted sections
+before sitting the exam (each item is a real DataForge AI feature, not just
+exam trivia):
+- [ ] Auto Loader (`cloudFiles`, schema evolution + `_rescued_data`) — built
+      in [notebooks/09_databricks_autoloader.py](../notebooks/09_databricks_autoloader.py),
+      not yet run/validated on Databricks. Properly resolves the
+      `VendorID` schema-drift crash from notebook 08 by rescuing mismatched
+      data instead of failing the stream — targets the *Incremental Data
+      Processing* section (22% of exam)
+- [ ] Lakeflow Declarative Pipelines (DLT): rebuild the medallion Job
+      declaratively with `EXPECT` data-quality constraints — targets
+      *Production Pipelines* (16%)
+- [ ] Unity Catalog governance: real catalog/schema structure, `GRANT`/
+      `REVOKE`, external locations/storage credentials (beyond the default
+      catalog used so far) — targets *Data Governance* (9%)
 
 ## Phase 2 — Azure + modern data stack
 - [ ] Azure Data Factory

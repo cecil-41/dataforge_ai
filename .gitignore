@@ -5,6 +5,7 @@ data/raw/*
 !data/raw/.gitkeep
 data/checkpoints/
 data/delta/
+data/streaming/
 spark-warehouse/
 metastore_db/
 derby.log
