@@ -105,12 +105,19 @@ for the full phase descriptions.
 Closing gaps identified against the official exam guide's weighted sections
 before sitting the exam (each item is a real DataForge AI feature, not just
 exam trivia):
-- [ ] Auto Loader (`cloudFiles`, schema evolution + `_rescued_data`) — built
-      in [notebooks/09_databricks_autoloader.py](../notebooks/09_databricks_autoloader.py),
-      not yet run/validated on Databricks. Properly resolves the
-      `VendorID` schema-drift crash from notebook 08 by rescuing mismatched
-      data instead of failing the stream — targets the *Incremental Data
-      Processing* section (22% of exam)
+- [x] Auto Loader (`cloudFiles`, schema evolution + `_rescued_data`) — built
+      and validated on Databricks in
+      [notebooks/09_databricks_autoloader.py](../notebooks/09_databricks_autoloader.py).
+      Ran as the `autoloader_bronze` task, kept independent of the
+      `dataforge_medallion` bronze/silver/gold DAG (no real data
+      dependency between them). Confirmed the fix: the February file
+      (physically `INT32` `VendorID` vs. January's `bigint`) no longer
+      crashes the stream — all 2,913,955 February rows had `VendorID`
+      routed into `_rescued_data` (as JSON, alongside `passenger_count`,
+      `RatecodeID`, etc.) with the column itself `NULL`, matching the
+      exact scenario that threw `SchemaColumnConvertNotSupportedException`
+      in notebook 08's plain Structured Streaming pipeline. Directly
+      resolves the *Incremental Data Processing* exam gap (22% weight)
 - [ ] Lakeflow Declarative Pipelines (DLT): rebuild the medallion Job
       declaratively with `EXPECT` data-quality constraints — targets
       *Production Pipelines* (16%)
