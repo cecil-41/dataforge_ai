@@ -110,7 +110,7 @@ def bronze_trips():
 )
 def zones():
     return (
-        spark.read.option("header", True)
+        spark.read.option("header", True).option("inferSchema", True)
         .csv(f"{RAW}/taxi_zone_lookup.csv")
     )
 
