@@ -20,10 +20,11 @@
 # MAGIC This must run before any other imports, since `dbutils.library.
 # MAGIC restartPython()` restarts the Python process afterwards. Resolving the
 # MAGIC repo root as an absolute path (rather than a relative `..`) and
-# MAGIC installing via `subprocess` -- instead of the `%pip install -e {var}`
-# MAGIC magic-command variable interpolation -- makes this reliable both when
-# MAGIC run interactively and as a Databricks Job task, where the working
-# MAGIC directory and magic-command variable substitution behave differently.
+# MAGIC installing via `subprocess` -- instead of the `pip install -e {var}`
+# MAGIC magic command (prefixed with `%`) and its unreliable variable
+# MAGIC interpolation -- makes this reliable both when run interactively and
+# MAGIC as a Databricks Job task, where the working directory and
+# MAGIC magic-command variable substitution behave differently.
 
 # COMMAND ----------
 

@@ -35,8 +35,9 @@
 # MAGIC ## Install the `dataforge_ai` package from this Git folder
 # MAGIC
 # MAGIC Same pattern as 07a/b/c: resolve the repo root as an absolute path and
-# MAGIC install via `subprocess` (not the `%pip install -e {var}` magic, which
-# MAGIC doesn't reliably interpolate variables), then restart Python.
+# MAGIC install via `subprocess` (not the `pip install -e {var}` magic command,
+# MAGIC prefixed with `%`, which doesn't reliably interpolate variables), then
+# MAGIC restart Python.
 
 # COMMAND ----------
 
