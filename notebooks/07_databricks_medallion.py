@@ -35,10 +35,9 @@
 # MAGIC   compute can't read local `file:///tmp/...` paths either -- Volumes
 # MAGIC   are the supported place for raw files + Delta tables here.
 # MAGIC - The `dataforge_ai` package is installed from this same Git folder via
-# MAGIC   the `pip install -e` magic command (prefixed with `%`), so
-# MAGIC   `read_trips`/`clean_trips`/`join_zones`/`hourly_demand` are the exact
-# MAGIC   same tested functions as the local pipeline -- no logic duplicated or
-# MAGIC   rewritten for Databricks.
+# MAGIC   `%pip install -e`, so `read_trips`/`clean_trips`/`join_zones`/
+# MAGIC   `hourly_demand` are the exact same tested functions as the local
+# MAGIC   pipeline -- no logic duplicated or rewritten for Databricks.
 # MAGIC
 # MAGIC Validated end-to-end: Bronze/Silver/Gold row counts match the local
 # MAGIC Docker pipeline (notebook 06) exactly (Silver = 9,301,798, Gold = 192,

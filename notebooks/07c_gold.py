@@ -15,9 +15,9 @@
 # MAGIC ## Install the `dataforge_ai` package from this Git folder
 # MAGIC
 # MAGIC Resolving the repo root as an absolute path and installing via
-# MAGIC `subprocess` -- instead of the `pip install -e {var}` magic command
-# MAGIC (prefixed with `%`) and its unreliable variable interpolation -- makes
-# MAGIC this reliable both when run interactively and as a Databricks Job task.
+# MAGIC `subprocess` -- instead of `%pip install -e {var}` magic-command
+# MAGIC variable interpolation -- makes this reliable both when run
+# MAGIC interactively and as a Databricks Job task.
 
 # COMMAND ----------
 
