@@ -81,11 +81,17 @@ def bronze_trips():
         f"{RAW}/yellow_tripdata_2023-02.parquet",
         f"{RAW}/yellow_tripdata_2023-03.parquet",
     ]
-    df = spark.read.parquet(*paths)
-    df = df.toDF(*[c.lower() for c in df.columns])
-    for col, target in TARGET_TYPES.items():
-        df = df.withColumn(col, F.col(col.lower()).cast(target))
-    return df.select(*TARGET_TYPES.keys()).withColumn(
+
+    def read_and_cast(path):
+        df = spark.read.parquet(path)
+        df = df.toDF(*[c.lower() for c in df.columns])
+        for col, target in TARGET_TYPES.items():
+            df = df.withColumn(col, F.col(col.lower()).cast(target))
+        return df.select(*TARGET_TYPES.keys())
+
+    from functools import reduce
+    df = reduce(lambda a, b: a.unionByName(b), [read_and_cast(p) for p in paths])
+    return df.withColumn(
         "pickup_month", F.date_format("tpep_pickup_datetime", "yyyy-MM")
     )
 
