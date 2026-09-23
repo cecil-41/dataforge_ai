@@ -118,9 +118,25 @@ exam trivia):
       exact scenario that threw `SchemaColumnConvertNotSupportedException`
       in notebook 08's plain Structured Streaming pipeline. Directly
       resolves the *Incremental Data Processing* exam gap (22% weight)
-- [ ] Lakeflow Declarative Pipelines (DLT): rebuild the medallion Job
-      declaratively with `EXPECT` data-quality constraints — targets
-      *Production Pipelines* (16%)
+- [x] Lakeflow Declarative Pipelines (DLT): rebuilt the medallion Job
+      declaratively in [notebooks/10_dlt_pipeline.py](../notebooks/10_dlt_pipeline.py)
+      as the `dataforge_dlt_medallion` pipeline — `@dlt.table` functions
+      for `bronze_trips`/`zones`/`silver_trips_enriched`/`gold_hourly_demand`,
+      dependency graph inferred from `dlt.read()` calls instead of manual
+      Job "Depends on" wiring. `clean_trips`'s filter rules became 5 named
+      `@dlt.expect_or_drop` constraints; validated run: Bronze 9.4M,
+      Silver 9.3M (83K dropped across the 5 rules, matching notebook 02's
+      82,689-row removal), Gold 192 rows — all matching the Job's
+      results exactly, with per-rule drop counts now visible in the
+      pipeline UI (a real gain over the Job's single aggregate count).
+      Two real bugs hit and fixed along the way: (1) `bronze_trips`
+      initially read all 3 monthly files in one `spark.read.parquet(*paths)`
+      call, forcing one shared physical schema across files via the
+      vectorized reader — the exact anti-pattern `read_and_cast` exists to
+      avoid — fixed by reading + casting each file separately then
+      `unionByName`; (2) `zones`' CSV read was missing `inferSchema=True`,
+      leaving `LocationID` as `string` against `PULocationID`/`DOLocationID`
+      as `long` — targets *Production Pipelines* (16%)
 - [ ] Unity Catalog governance: real catalog/schema structure, `GRANT`/
       `REVOKE`, external locations/storage credentials (beyond the default
       catalog used so far) — targets *Data Governance* (9%)
